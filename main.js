@@ -1,19 +1,27 @@
-document.querySelector('th').addEventListener('click', sortTable);
+const table = document.getElementById('grid');
 
-function sortTable () {   
-  const tbody = grid.getElementsByTagName('tbody')[0];
-  const rows = [].slice.call(tbody.rows);
+table.addEventListener('click', event => {
+  const target = event.target.closest('[data-type]');
+  const tbody = table.querySelector('tbody');
+  const sortType = target.dataset.type;
+  const column = target.cellIndex;
+  const rows = Array.prototype.slice.call(tbody.rows);
   
-  rows.sort(function(a, b) {
-    const age = a.cells[0].firstChild.data;
-    const name = b.cells[0].firstChild.data;
-    return age - name
+  rows.sort((a, b) => {
+    const valueA = a.cells[column].firstChild.data;
+    const valueB = b.cells[column].firstChild.data;
+
+    if (sortType === 'string') {
+      return valueA.localeCompare(valueB);
+    } if (sortType === 'number') {
+      return +valueA - +valueB;
+    }
+    return 0;   
   });
+
+  const parent = rows[column].parentNode;
   
-  const parent = rows[0].parentNode;
-  
-  rows.forEach(function(row) {
+  rows.forEach(row => {
     parent.appendChild(row);
-  });
-  
-}
+  });  
+})
